@@ -1,0 +1,14 @@
+{
+  "level": "DEBUG",
+  "submodule": {
+    "_module": "needless"
+  },
+  "_tags": {
+    "qa": {
+      "level": "INFO"
+    },
+    "prod": {
+      "level": "WARN"
+    }
+  }
+}

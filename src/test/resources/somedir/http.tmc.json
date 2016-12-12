@@ -1,0 +1,10 @@
+{
+  "timeout": "5s",
+  "https": true,
+
+  "_tags" : {
+    "dev" : {
+      "https": false
+    }
+  }
+}

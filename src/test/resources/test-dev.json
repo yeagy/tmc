@@ -1,0 +1,21 @@
+{
+  "app": "test",
+  "lb": {
+    "host": "dev.lb",
+    "port": "8080",
+    "timeout": "5s",
+    "https": false
+  },
+  "direct": {
+    "host": "123.123.1.123",
+    "port": "10320",
+    "timeout": "5s",
+    "https": false
+  },
+  "logging": {
+    "level": "DEBUG",
+    "submodule": {
+      "foo": "bar"
+    }
+  }
+}

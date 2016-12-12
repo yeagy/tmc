@@ -1,0 +1,65 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
+        classpath 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'com.bmuschko.nexus'
+apply plugin: 'io.codearte.nexus-staging'
+
+group = 'io.github.yeagy'
+version = '0.1.0'
+
+sourceCompatibility = '1.7'
+
+repositories {
+    mavenLocal()
+    jcenter()
+    mavenCentral()
+}
+
+def vJackson = '2.8.5'
+
+dependencies {
+    compile 'io.github.lukehutch:fast-classpath-scanner:2.0.9'
+    compile "com.fasterxml.jackson.core:jackson-databind:$vJackson"
+    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$vJackson"
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.projectlombok:lombok:1.16.12'
+}
+
+
+modifyPom {
+    project {
+        name 'Tagged Modular Configuration'
+        description 'Configuration library. Can composite modules together and further composite with tags'
+        url 'https://github.com/yeagy/tmc'
+
+        scm {
+            url 'https://github.com/yeagy/tmc'
+            connection 'scm:https://github.com/yeagy/tmc.git'
+            developerConnection 'scm:git://github.com/yeagy/tmc.git'
+        }
+
+        licenses {
+            license {
+                name 'The MIT License (MIT)'
+                url 'https://opensource.org/licenses/mit-license.php'
+            }
+        }
+
+        developers {
+            developer {
+                name 'Chris Yeagy'
+                email 'cyeagy@gmail.com'
+            }
+        }
+    }
+}

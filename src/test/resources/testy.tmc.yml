@@ -1,0 +1,29 @@
+app: test
+logging:
+  _module: logging
+lb:
+  _module: http
+  port: 8080
+direct:
+  _module: http
+  port: 10320
+  https: false
+_tags:
+  dev:
+    lb:
+      host: dev.lb
+    direct:
+      host: 123.123.1.123
+  qa:
+    lb:
+      host: qa.lb
+    direct:
+      host: 123.123.2.123
+      https: false
+  prod:
+    lb:
+      host: prod.lb
+    direct:
+      host: 123.123.3.123
+    logging:
+      _module: shut_up_the_logs
