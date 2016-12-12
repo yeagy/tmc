@@ -4,7 +4,7 @@
 
 #Tagged Modular Configuration
 * Java configuration library. Will read and map your config file(s) to a POJO.
-* Modular: Can reference other config files on the classpath to merge config at compile time.
+* Modular: Can reference other config files on the classpath to merge into your config.
 * Tagged: Can define config blocks with tags to merge config at run time.
 * Formats: JSON and YAML
 
@@ -15,7 +15,10 @@ Usage:
     //your application code...
 ```
 
-JSON example:
+* TMC modules have filename patterns \<module name\>.tmc.\<format\> (i.e. main.tmc.json)
+* Modules are referenced using the "_module" field name. The module file will be loaded and merged into the node the "_module" was found on.
+* Tags are defined on a module root using the "_tags" field name. Tags specified at runtime will be merged onto the module at the root level, so full paths are needed in tag blocks.
+* Module merging will not overwrite the leafs of the parent module. Tag merging will overwrite existing leafs of the parent module, whole object nodes are not replaced. Tag collisions will be won by the leftmost tag of the input list.
 ```json
 //main.tmc.json
 {
@@ -41,6 +44,7 @@ JSON example:
 //loadbalancer.tmc.json
 {
   "host": "localhost",
+  "timeout": "5s",
   "_tags": {
     "prod": {
       "host": "lb.site.com"
@@ -48,23 +52,19 @@ JSON example:
   }
 }
 ```
-* TMC modules have filename patterns \<module name\>.tmc.\<format\> (i.e. main.tmc.json)
-* Modules be referenced using the "_module" field name. The module file will be loaded and merged into the node the "_module" was found on.
-* Tags are defined on a module using the "_tags" field name. Tags specified at runtime will be merged onto the module at the root level, so full paths are needed in tag blocks.
-* Module merging will not overwrite the leafs of the parent module. Tag merging will overwrite existing leafs of the parent module, whole object nodes are not replaced. Tag collisions will be won by the leftmost tag of the input list.
-<br><br>
 Running TMC on the "main" module with the "prod" tag would create the config below.
 ```json
 {
   "app": "example",
   "logging": {
-      "level": "WARN",
-      "enabled": true
-    },
-    "http": {
-      "host": "lb.site.com",
-      "port": 8080
-    }
+    "level": "WARN",
+    "enabled": true
+  },
+  "http": {
+    "host": "lb.site.com",
+    "timeout": "5s",
+    "port": 8080
+  }
 }
 ```
 TMC modules can reference other modules. TMC will resolve modules recursively, and error if a cycle is detected. Tags can also contain modules.
