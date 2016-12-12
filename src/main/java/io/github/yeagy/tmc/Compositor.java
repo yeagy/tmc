@@ -46,7 +46,7 @@ public final class Compositor {
      */
     public Compositor(String baseModuleName, List<String> appliedTags) throws TmcException {
         this.appliedTags = appliedTags == null ? new ArrayList<String>() : appliedTags;
-        composite = compositeModule(baseModuleName, new HashSet<String>());
+        composite = loadAndMergeModule(baseModuleName, new HashSet<String>());
         exceptOnMissingTags();
     }
 
@@ -77,7 +77,7 @@ public final class Compositor {
         }
     }
 
-    private ObjectNode compositeModule(String moduleName, Set<String> moduleChain) throws TmcException {
+    private ObjectNode loadAndMergeModule(String moduleName, Set<String> moduleChain) throws TmcException {
         if (moduleChain.contains(moduleName)) {
             throw new TmcException("configuration contains a module cycle " + moduleName);
         }
@@ -85,24 +85,28 @@ public final class Compositor {
 
         ObjectNode module = moduleCache.get(moduleName);
         if (module == null) {
-            module = walk(resourceTree(moduleName), moduleChain);
-            ObjectNode tags = (ObjectNode) module.remove("_tags");
-            if (tags != null && !appliedTags.isEmpty()) {
-                for (int i = appliedTags.size() - 1; i >= 0; i--) {//go backwards through tags to give left-to-right overwrite behavior
-                    String appliedTag = appliedTags.get(i);
-                    ObjectNode tag = (ObjectNode) tags.get(appliedTag);
-                    if (tag != null) {
-                        foundTags.add(appliedTag);
-                        ObjectNode configuredTag = walk(tag, moduleChain);
-                        mergeTrees(module, configuredTag, true);
-                    }
-                }
-            }
+            module = walk(loadModule(moduleName), moduleChain);
+            mergeTags(module, moduleChain);
             moduleCache.put(moduleName, module);
         }
 
         moduleChain.remove(moduleName);
         return module;
+    }
+
+    private void mergeTags(ObjectNode module, Set<String> moduleChain) throws TmcException {
+        ObjectNode tags = (ObjectNode) module.remove("_tags");
+        if (tags != null && !appliedTags.isEmpty()) {
+            for (int i = appliedTags.size() - 1; i >= 0; i--) {//go backwards through tags to give left-to-right overwrite behavior
+                String appliedTag = appliedTags.get(i);
+                ObjectNode tag = (ObjectNode) tags.get(appliedTag);
+                if (tag != null) {
+                    foundTags.add(appliedTag);
+                    ObjectNode configuredTag = walk(tag, moduleChain);
+                    mergeTrees(module, configuredTag, true);
+                }
+            }
+        }
     }
 
     private ObjectNode walk(ObjectNode node, Set<String> moduleChain) throws TmcException {
@@ -115,7 +119,7 @@ public final class Compositor {
         }
         JsonNode module = node.remove("_module");
         if (module != null) {
-            mergeTrees(node, compositeModule(module.asText(), moduleChain), false);
+            mergeTrees(node, loadAndMergeModule(module.asText(), moduleChain), false);
         }
         return node;
     }
@@ -149,7 +153,7 @@ public final class Compositor {
         }
     }
 
-    private ObjectNode resourceTree(final String moduleName) throws TmcException {
+    private ObjectNode loadModule(final String moduleName) throws TmcException {
         final List<ObjectNode> modules = new ArrayList<>();
         FileMatchProcessor fileMatchProcessor = new FileMatchProcessor() {
             @Override
