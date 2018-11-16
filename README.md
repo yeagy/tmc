@@ -52,7 +52,7 @@ Usage:
 }
 ```
 Running TMC on the "main" module with the "prod" tag would create the config below.
-```json
+```json5
 {
   "app": "example",          //root tree
   "logging": {               //root tree
