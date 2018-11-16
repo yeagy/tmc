@@ -1,6 +1,6 @@
 package io.github.yeagy.tmc;
 
-public class TmcException extends Exception{
+public class TmcException extends RuntimeException {
     public TmcException(String message) {
         super(message);
     }

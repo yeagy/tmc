@@ -14,7 +14,7 @@ apply plugin: 'com.bmuschko.nexus'
 apply plugin: 'io.codearte.nexus-staging'
 
 group = 'io.github.yeagy'
-version = '0.1.1-SNAPSHOT'
+version = '0.2.0'
 
 sourceCompatibility = '1.7'
 
@@ -27,9 +27,10 @@ repositories {
 def vJackson = '2.8.5'
 
 dependencies {
-    compile 'io.github.lukehutch:fast-classpath-scanner:2.0.9'
+    compile 'io.github.lukehutch:fast-classpath-scanner:2.21'
     compile "com.fasterxml.jackson.core:jackson-databind:$vJackson"
     compile "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$vJackson"
+    compile 'ru.vyarus:generics-resolver:3.0.0'
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.projectlombok:lombok:1.16.12'
